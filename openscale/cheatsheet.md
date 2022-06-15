@@ -36,6 +36,17 @@ cpd_parms = {
 cpd_token = get_cpd_token(cpd_parms)
 ```
 
+## OpenScale
+
+### Get list of (Accessible) OpenScale Instances 
+```
+from ibm_watson_openscale.utils.client_utils import get_my_instance_ids
+my_instances = get_my_instance_ids(cpd_url, cpd_username, apikey=cpd_api_key)
+print(my_instances)
+```
+
+`['00000000-0000-0000-0000-000000000000 (openscale-defaultinstance)']`
+
 ### Returns the first space_id that matches the name
 ```
 def get_space_id_by_name(wml_client, deployment_space)
