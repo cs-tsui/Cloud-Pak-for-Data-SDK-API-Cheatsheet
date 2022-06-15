@@ -27,6 +27,13 @@ def get_cpd_token(parms):
     json_data = response.json()
     access_token = json_data['token']
     return access_token
+
+cpd_parms = {
+    'username': <username>,
+    'apikey': <apikey>,
+    'url': <cpd_url>,
+}
+cpd_token = get_cpd_token(cpd_parms)
 ```
 
 ### Returns the first space_id that matches the name
