@@ -1,14 +1,26 @@
-### Filter Deployment Spaces by Name and get ID
+<!-- vscode-markdown-toc -->
+	* 1. [CPD Internal Service URL](#CPDInternalServiceURL)
+	* 2. [CPD Token Generation](#CPDTokenGeneration)
+	* 3. [Get list of (Accessible) OpenScale Instances](#GetlistofAccessibleOpenScaleInstances)
+	* 4. [Filter Deployment Spaces by Name and get ID](#FilterDeploymentSpacesbyNameandgetID)
 
-### CPD Internal Service URL
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+# CPD Platform - General
+
+###  1. <a name='CPDInternalServiceURL'></a>CPD Internal Service URL
 
 ```
 import os
 internal_cpd_url = os.environ['RUNTIME_ENV_APSX_URL']
 ```
-'https://internal-nginx-svc:12443'
+`https://internal-nginx-svc:12443`
 
-### CPD Token Generation
+###  2. <a name='CPDTokenGeneration'></a>CPD Token Generation
 ```
 import os
 
@@ -36,9 +48,9 @@ cpd_parms = {
 cpd_token = get_cpd_token(cpd_parms)
 ```
 
-## OpenScale
+# OpenScale
 
-### Get list of (Accessible) OpenScale Instances 
+###  3. <a name='GetlistofAccessibleOpenScaleInstances'></a>Get list of (Accessible) OpenScale Instances 
 ```
 from ibm_watson_openscale.utils.client_utils import get_my_instance_ids
 my_instances = get_my_instance_ids(cpd_url, cpd_username, apikey=cpd_api_key)
@@ -47,7 +59,9 @@ print(my_instances)
 
 `['00000000-0000-0000-0000-000000000000 (openscale-defaultinstance)']`
 
-### Returns the first space_id that matches the name
+
+# Spaces
+###  4. <a name='FilterDeploymentSpacesbyNameandgetID'></a>Filter Deployment Spaces by Name and get ID
 ```
 def get_space_id_by_name(wml_client, deployment_space)
     filtered_spaces = [space['metadata']['id'] for space in wml_client.spaces.get_details()['resources'] if
