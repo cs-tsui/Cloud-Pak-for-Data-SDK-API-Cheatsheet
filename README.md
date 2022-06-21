@@ -37,7 +37,7 @@ def get_cpd_token(cpd_username, cpd_apikey, cpd_url):
         'username': cpd_username,
         'api_key': cpd_apikey
     }
-    response = requests.post(url, headers=headers, json=payload, verify=False)
+    response = requests.post(url, json=payload, verify=False)
     json_data = response.json()
     access_token = json_data['token']
     return access_token
