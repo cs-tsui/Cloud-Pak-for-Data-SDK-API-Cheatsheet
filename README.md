@@ -7,6 +7,8 @@
 - [OpenScale](#openscale)
     - [Get list of (accessible) OpenScale instances](#get-list-of-accessible-openscale-instances)
     - [Instantiate OpenScale Client](#instantiate-openscale-client)
+  - [Custom Metrics](#custom-metrics)
+    - [Patch/Update Custom Metric Monitor's Integrated System ID](#patchupdate-custom-metric-monitors-integrated-system-id)
 - [WML](#wml)
     - [WML (Minimal) Payload Format Req for Python Function](#wml-minimal-payload-format-req-for-python-function)
     - [Instantiate WML Client](#instantiate-wml-client)
@@ -92,6 +94,39 @@ os_client = None
 authenticator = BearerTokenAuthenticator(bearer_token=cpd_token)
 os_client = APIClient(service_url=cpd_url, authenticator=authenticator)
 ```
+
+## Custom Metrics
+
+### Patch/Update Custom Metric Monitor's Integrated System ID
+```py
+# From the output above we need get the ID of the custom metrics provider
+integrated_systems = IntegratedSystems(wos_client).list().result
+print(integrated_systems)
+custom_integrated_system_id = <correct integrated system id>
+
+# We also need the custom monitor instance ID - use the show below, or other methods like subscription print to get the monitor instance ID
+wos_client.monitor_instances.show(10)
+custom_monitor_instance_id = <the monitor instance ID for our subscription>
+
+
+payload = [
+    {
+       "op": "replace",
+       "path": "/parameters",
+       "value": {
+           "custom_metrics_provider_id": custom_integrated_system_id
+           "custom_metrics_wait_time":   120 
+       }
+    }
+]
+payload
+
+# run the patch
+response = wos_client.monitor_instances.update(custom_monitor_instance_id, payload, update_metadata_only = True)
+result = response.result
+result
+```
+
 
 # WML
 
