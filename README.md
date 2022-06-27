@@ -7,6 +7,7 @@
 - [OpenScale](#openscale)
     - [Get list of (accessible) OpenScale instances](#get-list-of-accessible-openscale-instances)
     - [Instantiate OpenScale Client](#instantiate-openscale-client)
+    - [Printing Subscription and Related Info for Debugging](#printing-subscription-and-related-info-for-debugging)
   - [Custom Metrics](#custom-metrics)
     - [Patch/Update Custom Metric Monitor's Integrated System ID](#patchupdate-custom-metric-monitors-integrated-system-id)
 - [WML](#wml)
@@ -94,6 +95,82 @@ os_client = None
 authenticator = BearerTokenAuthenticator(bearer_token=cpd_token)
 os_client = APIClient(service_url=cpd_url, authenticator=authenticator)
 ```
+
+### Printing Subscription and Related Info for Debugging
+
+```py
+subscription_name_target = <your subscription name>
+subscriptions = wos_client.subscriptions.list().result.subscriptions
+
+for subscription in subscriptions:
+    # Subscription Dict will hold more information after it's fetched
+    sub_dict = subscription.to_dict()
+    print("====================================================================================")
+    print("| Subscription: ", subscription.entity.asset.name)
+    print("====================================================================================")
+#     print(isinstance(subscription, object))
+#     print(subscription)
+#     print(type(subscription))
+    
+    # Filter on name if subscription name exists
+    if subscription_name_target is not None:
+        if subscription.entity.asset.name != subscription_name_target:
+            print("Subscription name doesn't match. Skipping fetch")
+            continue
+        else:
+            print("Found subscription with name: ", subscription_name_target)
+    
+    print(subscription)
+    
+    # Get subscription ID from the object - alternatively convert to dict first
+    sub_id = subscription.metadata.id
+    
+    # Get monitored instances for the subscription
+    monitor_instances = wos_client.monitor_instances.list(target_target_id=sub_id)
+
+    print("====================================================================================")
+    print("| Monitor Instances ({}) for ".format(len(monitor_instances.result.monitor_instances)), subscription.entity.asset.name)
+    print("====================================================================================")
+    
+    
+    # TODO: get openpages integrated system details
+    # from integration system
+    # 
+    #  'parameters': {'custom_metrics_provider_id': 'b7d80d11-d9d7-47e7-833c-45b863c1e0ad',
+    #    'custom_metrics_wait_time': 120},
+
+    for mon_instance in monitor_instances.result.monitor_instances:
+        
+        mon_def_id = mon_instance.entity.monitor_definition_id
+        print("====================================================================================")
+        print("| Monitor Instance: ", mon_def_id)
+        print("====================================================================================")
+        print(mon_instance)
+        
+        print(mon_instance.entity.parameters)
+        # For each monitor instance, if custom metric with provider, fetch custom metric provider information
+        if hasattr(mon_instance.entity, 'parameters') and 'custom_metrics_provider_id' in mon_instance.entity.parameters:
+            custom_metrics_provider_id = mon_instance.entity.parameters['custom_metrics_provider_id'] # also references the integrated system ID
+            
+            print("====================================================================================")
+            print("| Custom Metric - has integration ", mon_def_id)
+            print("====================================================================================")
+            print("TODO")
+            if custom_metrics_provider_id in integrated_systems_dict:
+                int_sys_obj = integrated_systems_dict[custom_metrics_provider_id]
+                print(int_sys_obj.to_dict())
+            else:
+                # TODO: throw error instead of just print
+                print("Custom Metric Provider/Integrated System not found for ID ", custom_metrics_provider_id)
+        
+            # Get monitor definition
+            print("====================================================================================")
+            print("| Monitor Definition for", mon_def_id)
+            print("====================================================================================")
+            mon_def = wos_client.monitor_definitions.get(monitor_definition_id=mon_instance.entity.monitor_definition_id).result
+            print(mon_def)
+```
+
 
 ## Custom Metrics
 
