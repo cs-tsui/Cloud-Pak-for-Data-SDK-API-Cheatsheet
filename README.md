@@ -99,6 +99,16 @@ os_client = APIClient(service_url=cpd_url, authenticator=authenticator)
 ### Printing Subscription and Related Info for Debugging
 
 ```py
+# prefetch integrated systems for ease of lookup by ID
+# Remember the value in the dict is the integrated system object
+integrated_systems = IntegratedSystems(wos_client).list().result.integrated_systems
+integrated_systems_dict = {}
+
+for iss in integrated_systems:
+    integrated_systems_dict[iss.metadata.id] = iss
+integrated_systems_dict
+
+# Target subscription to print
 subscription_name_target = <your subscription name>
 subscriptions = wos_client.subscriptions.list().result.subscriptions
 
