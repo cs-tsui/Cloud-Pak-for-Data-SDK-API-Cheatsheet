@@ -18,6 +18,8 @@
 
 # CPD Platform
 
+Below is a collection of snippets for many commmon (and not so common) operations programmatically with the platform and its various services.
+
 ### CPD internal service URL
 
 ```py
